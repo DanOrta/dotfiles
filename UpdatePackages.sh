@@ -5,6 +5,8 @@ if [ $userName = "root" ];then
 	apt-get update
 	echo -e "\nUpgrading packages..."
 	apt-get full-upgrade --fix-missing -y
+	echo -e "Distro Upgrade..."
+	apt dist-upgrade -y
 	echo -e "\nRemoving unnecessary packages..."
 	apt autoremove -y
 else
