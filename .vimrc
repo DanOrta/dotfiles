@@ -1,4 +1,3 @@
-colorscheme murphy
 filetype on                 " Enable file type detection
 filetype plugin on
 set nocompatible
