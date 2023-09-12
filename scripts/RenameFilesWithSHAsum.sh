@@ -9,6 +9,7 @@ else
 	HASH=$(echo -e "md5sum\nsha1sum\nsha224sum\nsha256sum\nsha384sum\nsha512sum\nshasum" | dmenu -l 6)
 	uplo=$(echo -e "UPPERCASE\nlowercase" | dmenu -l 2)
 	if [ $uplo = "UPPERCASE" ];then
+		# TODO: Replace the  semi-colons for '&&'. This will make it more robust, in case something fails!
         for i in *.*;do EXT=$(echo $i | cut -d "." -f2);SHA=$($HASH -b "$i" | cut -d " " -f1);NEWNAME=$(echo "$SHA.$EXT" | tr [:lower:] [:upper:]);mv "$i" $NEWNAME -vn;done
 	else
         for i in *.*;do EXT=$(echo $i | cut -d "." -f2);SHA=$($HASH -b "$i" | cut -d " " -f1);NEWNAME=$(echo "$SHA.$EXT" | tr [:upper:] [:lower:]);mv "$i" $NEWNAME -vn;done
