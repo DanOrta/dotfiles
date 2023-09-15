@@ -1,24 +1,89 @@
+# ##################################################################################################
+# MIT License
+#
+# Copyright (c) 2023 DanOrta
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# ##################################################################################################
+# File: RenameFilesWithSHAsum.sh
+# Description: With this script in conjuction with the "dmenu" tool, you can select a specifi hash
+# and change the file name with it. Available hashes:
+# MD5*
+# SHA1*
+# SHA224
+# SHA256
+# SHA384
+# SHA512
+# * Use these hashes with precaution, since they aren't secure and are known to have collisions.
+# ##################################################################################################
 #!/bin/bash
+
 # We need to check if "dmenu" is installed
+# Colors:
 RESET='\033[00m'
 RED='\033[01;31m'
-VAR=$(whereis dmenu)
-if [ "$VAR" == "dmenu:" ];then
+# Some distros don't have "where" installed
+DMENU=$(whereis dmenu)
+# Available hashes:
+AVAILABLE_HASHES="md5sum\nsha1sum\nsha224sum\nsha256sum\nsha384sum\nsha512sum"
+
+if [ "$DMENU" == "dmenu:" ]; then
 	echo -e $RED"dmenu is not installed!"$RESET
 else
-	HASH=$(echo -e "md5sum\nsha1sum\nsha224sum\nsha256sum\nsha384sum\nsha512sum\nshasum" | dmenu -l 6)
+	HASH=$(echo -e "${AVAILABLE_HASHES}" | dmenu -l 6)
 	uplo=$(echo -e "UPPERCASE\nlowercase" | dmenu -l 2)
-	if [ $uplo = "UPPERCASE" ];then
-		# TODO: Replace the  semi-colons for '&&'. This will make it more robust, in case something fails!
-        for i in *.*;do EXT=$(echo $i | cut -d "." -f2);SHA=$($HASH -b "$i" | cut -d " " -f1);NEWNAME=$(echo "$SHA.$EXT" | tr [:lower:] [:upper:]);mv "$i" $NEWNAME -vn;done
+	if [ $uplo = "UPPERCASE" ]; then
+		# Be careful here: we only look for files with an extension and no dots in its name.
+		# If your file doesn't match the pattern, feel free to adapt it.
+        for i in *.*
+			do
+				EXT=$(echo $i | cut -d "." -f2)
+				SHA=$($HASH -b "${i}" | cut -d " " -f1)
+				NEWNAME=$(echo "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+				mv "${i}" $NEWNAME -vn
+		done
 	else
-        for i in *.*;do EXT=$(echo $i | cut -d "." -f2);SHA=$($HASH -b "$i" | cut -d " " -f1);NEWNAME=$(echo "$SHA.$EXT" | tr [:upper:] [:lower:]);mv "$i" $NEWNAME -vn;done
+        for i in *.*
+			do
+				EXT=$(echo $i | cut -d "." -f2)
+				SHA=$($HASH -b "${i}" | cut -d " " -f1)
+				NEWNAME=$(echo "${SHA}.${EXT}" | tr [:upper:] [:lower:])
+				mv "${i}" $NEWNAME -vn
+		done
 	fi
 fi
+
+# ##################################################################################################
 # Alternative Options:
 #
 # Generate a report of all the files that were renamed!
-# for i in *.*;do EXT=$(echo $i | cut -d "." -f2);SHA=$($HASH -b "$i" | cut -d " " -f1);NEWNAME=$(echo "$SHA.$EXT" | tr [:lower:] [:upper:]);mv "$i" $NEWNAME -vn >> REPORT.LOG;done
+# for i in *.*
+# 	do
+# 		EXT=$(echo $i | cut -d "." -f2)
+# 		SHA=$($HASH -b "$i" | cut -d " " -f1)
+# 		NEWNAME=$(echo "$SHA.$EXT" | tr [:lower:] [:upper:])
+# 		mv "$i" $NEWNAME -vn >> REPORT.LOG
+# done
 #
 # Generate a CSV file with the sha-sum of all the files
-# for i in *.*;do SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}";echo "$SHA";done > sha256sum_ouput.csv
+# for i in *.*
+# 	do
+# 		SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}"
+# 		echo "$SHA"
+# done > sha256sum_ouput.csv
