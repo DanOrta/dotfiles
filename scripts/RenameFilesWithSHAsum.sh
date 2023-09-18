@@ -1,3 +1,4 @@
+#!/bin/bash
 # ##################################################################################################
 # MIT License
 #
@@ -32,41 +33,37 @@
 # SHA512
 # * Use these hashes with precaution, since they aren't secure and are known to have collisions.
 # ##################################################################################################
-#!/bin/bash
-
 # We need to check if "dmenu" is installed
 # Colors:
 RESET='\033[00m'
 RED='\033[01;31m'
-# Some distros don't have "where" installed
-DMENU=$(whereis dmenu)
 # Available hashes:
 AVAILABLE_HASHES="md5sum\nsha1sum\nsha224sum\nsha256sum\nsha384sum\nsha512sum"
 
-if [ "$DMENU" == "dmenu:" ]; then
-	echo -e $RED"dmenu is not installed!"$RESET
-else
+if command -v dmenu >/dev/null 2>&1;then
 	HASH=$(echo -e "${AVAILABLE_HASHES}" | dmenu -l 6)
 	uplo=$(echo -e "UPPERCASE\nlowercase" | dmenu -l 2)
-	if [ $uplo = "UPPERCASE" ]; then
+	if [ "$uplo" = "UPPERCASE" ]; then
 		# Be careful here: we only look for files with an extension and no dots in its name.
 		# If your file doesn't match the pattern, feel free to adapt it.
         for i in *.*
 			do
-				EXT=$(echo $i | cut -d "." -f2)
+				EXT=$(echo -e $i | cut -d "." -f2)
 				SHA=$($HASH -b "${i}" | cut -d " " -f1)
-				NEWNAME=$(echo "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+				NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:lower:] [:upper:])
 				mv "${i}" $NEWNAME -vn
 		done
 	else
         for i in *.*
 			do
-				EXT=$(echo $i | cut -d "." -f2)
+				EXT=$(echo -e $i | cut -d "." -f2)
 				SHA=$($HASH -b "${i}" | cut -d " " -f1)
-				NEWNAME=$(echo "${SHA}.${EXT}" | tr [:upper:] [:lower:])
+				NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:upper:] [:lower:])
 				mv "${i}" $NEWNAME -vn
 		done
 	fi
+else
+	echo -e "${RED}dmenu is not installed!${RESET}"
 fi
 
 # ##################################################################################################
@@ -75,9 +72,9 @@ fi
 # Generate a report of all the files that were renamed!
 # for i in *.*
 # 	do
-# 		EXT=$(echo $i | cut -d "." -f2)
+# 		EXT=$(echo -e $i | cut -d "." -f2)
 # 		SHA=$($HASH -b "$i" | cut -d " " -f1)
-# 		NEWNAME=$(echo "$SHA.$EXT" | tr [:lower:] [:upper:])
+# 		NEWNAME=$(echo -e "$SHA.$EXT" | tr [:lower:] [:upper:])
 # 		mv "$i" $NEWNAME -vn >> REPORT.LOG
 # done
 #
@@ -85,5 +82,5 @@ fi
 # for i in *.*
 # 	do
 # 		SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}"
-# 		echo "$SHA"
+# 		echo -e "$SHA"
 # done > sha256sum_ouput.csv

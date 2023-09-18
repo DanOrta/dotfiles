@@ -1,3 +1,4 @@
+#!/bin/bash
 # ##################################################################################################
 # MIT License
 #
@@ -27,7 +28,6 @@
 # could potentially delete files and/or folders! Always make sure to create backups.
 # ##################################################################################################
 
-#!/bin/bash
 # SCRIPT TO SYNCHRONIZE TIMESTAMPS IN FILES:
 
 #FILES_TO_UPDATE=".../" # DON'T FORGET TO ADD A SLASH AT THE END OF THE PATH!

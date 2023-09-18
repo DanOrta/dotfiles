@@ -1,3 +1,4 @@
+#!/bin/bash
 # ##################################################################################################
 # MIT License
 #
@@ -22,10 +23,8 @@
 # SOFTWARE.
 # ##################################################################################################
 # File UpdatePackages.sh
-# Description: A simple file to update debian based distros! Make sure to run it with SUDO
+# Description: A simple file to update software packages in a Debian based distro.
 # ##################################################################################################
-#
-#!/bin/bash
 userName=$(whoami)
 APT_STATUS=$(whereis apt)
 # COLORS
@@ -47,3 +46,4 @@ else
 		echo -n -e $RED"You are not root! Please use sudo to run this script!!\a"$RESET
 	fi
 fi
+

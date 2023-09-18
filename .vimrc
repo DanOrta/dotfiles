@@ -33,6 +33,7 @@ filetype indent on          " Enable filetype-specific indenting
 set autoindent              " smartindent wasn't so smart after all
 set autoread                " Enable auto-read files
 set clipboard=unnamedplus
+set fileencoding=utf-8      " Set file encoding to UTF-8
 set guioptions=aAace        " Don't show scrollbar
 set hlsearch
 set incsearch               " Set incremental search
