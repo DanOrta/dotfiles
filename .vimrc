@@ -45,7 +45,7 @@ set shiftwidth=4
 set showmatch               " Show matching braces
 set showmode                " Show INSERT, VISUAL, etc, mode
 set smarttab                " Better space and tab functionality
-set tabstop=4               " Make the tab indent equal to 4
+set tabstop=4 expandtab     " Make the tab indent equal to 4
 set wildmenu
 set wildmode=list:longest
 " """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -59,9 +59,6 @@ inoremap ' ''<Left>
 inoremap ¿ ¿?<Left>
 inoremap ¡ ¡!<Left>
 
-" LaTeX commands
-autocmd FileType tex map <c-m> :wa<CR>:make<CR>
-
 " Map Ctrl+S to save all files
 map <c-s> <Esc>:wa<CR>
 " Map Ctrl+S in insert mode to save a file
@@ -71,15 +68,11 @@ map <c-z> u
 " Map Ctrl+Z in insert mode
 inoremap <c-z> <Esc>ui<Right>
 " Close without saving
-map <Esc><Esc> :qa!<Enter>
-" Go to he beginning of the document
-map <Home><Home> <c-Home>
-" Go to the end of the file
-map <End><End> GA
-" Go to the end of the file and add a new line
-map <End>+ <c-End>o
+map <Esc><Esc> :qa!<CR>
+" Add a new line at the end of the file
+map <End>+ Go
 
-" Tabs:
+" VIM Tabs:
 " Add a new tab
 map ++ :tabnew<CR>
 " Close tab without saving
@@ -91,12 +84,50 @@ map <c-Left> gT
 " Open the terminal in a tab at the bottom
 map tt :bo term<CR>
 
-" C PROGRAMMING LANGUAGE
-" Single-line C comment
-inoremap // //<Space>
-" Multi-line C comment
-inoremap /*  /*<Space><Space><Space>*/<Left><Left><Left><Left>
-
 " Move the screen using the cursor
 map <ScrollWheelDown> <c-E>
 map <ScrollWheelUp> <c-Y>
+
+" ========== File Type specific ========== "
+" ===== C/C++ =====
+" Single-line C comment
+autocmd FileType h inoremap // //<Space>
+autocmd FileType c inoremap // //<Space>
+autocmd FileType cpp inoremap // //<Space>
+" Multi-line C comment
+autocmd FileType h inoremap /*  /*<Space><Space><Space>*/<Left><Left><Left><Left>
+autocmd FileType c inoremap /*  /*<Space><Space><Space>*/<Left><Left><Left><Left>
+autocmd FileType cpp inoremap /*  /*<Space><Space><Space>*/<Left><Left><Left><Left>
+" Compilation via GNU Make
+autocmd FileType h map <F5> :!make<CR>
+autocmd FileType c map <F5> :!make<CR>
+autocmd FileType cpp map <F5> :!make<CR>
+" Make clean
+autocmd FileType h map <F6> :!make<space>clean<CR>
+autocmd FileType c map <F6> :!make<space>clean<CR>
+autocmd FileType cpp map <F6> :!make<space>clean<CR>
+" Make rebuild
+autocmd FileType h map <F7> :!make<space>rebuild<CR>
+autocmd FileType c map <F7> :!make<space>rebuild<CR>
+autocmd FileType cpp map <F7> :!make<space>rebuild<CR>
+" Autocomplete when presing the "." symbol
+autocmd FileType c map . .<S-C>P
+
+" ===== LaTeX ===== "
+" Normal build
+autocmd FileType tex map <F5> :!make<CR>
+" Rebuild
+autocmd FileType tex map <F7> :!make<space>rebuild<enter>
+" Clean
+autocmd FileType tex map <F6> :!make<space>clean<CR>
+" Auto-complete 'begin'
+autocmd FileType tex inoremap \be \begin{}<CR>\end{}<home><CR><Up><Tab>
+" Auto-complete bold text
+autocmd FileType tex inoremap \tb \textbf{}<left>
+" Auto-complete italic text
+autocmd FileType tex inoremap \ti \textit{}<left>
+" Auto-complete mono-space text
+autocmd FileType tex inoremap \tt \texttt{}<left>
+" Hline (for tables)
+autocmd FileType tex inoremap \hl \hline
+" ========== File Type specific ========== "
