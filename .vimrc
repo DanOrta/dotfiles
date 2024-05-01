@@ -60,7 +60,7 @@ inoremap ¿ ¿?<Left>
 inoremap ¡ ¡!<Left>
 
 " Map Ctrl+S to save all files
-map <c-s> <Esc>:wa<CR>
+map <c-s> :wa<CR>
 " Map Ctrl+S in insert mode to save a file
 inoremap <c-s> <Esc>:w<CR>
 " Map Ctrl+Z 
@@ -110,8 +110,6 @@ autocmd FileType cpp map <F6> :!make<space>clean<CR>
 autocmd FileType h map <F7> :!make<space>rebuild<CR>
 autocmd FileType c map <F7> :!make<space>rebuild<CR>
 autocmd FileType cpp map <F7> :!make<space>rebuild<CR>
-" Autocomplete when presing the "." symbol
-autocmd FileType c map . .<S-C>P
 
 " ===== LaTeX ===== "
 " Normal build
