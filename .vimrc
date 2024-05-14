@@ -79,8 +79,10 @@ map ++ :tabnew<CR>
 map -- :q!<Enter>
 " Move to the tab to the right
 map <c-Right> gt
+map <TAB> gt
 " Move to the tab to the left
 map <c-Left> gT
+map <S-TAB> gT
 " Open the terminal in a tab at the bottom
 map tt :bo term<CR>
 

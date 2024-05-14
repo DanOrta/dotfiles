@@ -181,7 +181,3 @@ toggle_oneline_prompt(){
 }
 zle -N toggle_oneline_prompt
 bindkey ^P toggle_oneline_prompt
-
-# bash commands
-eval $(ssh-agent)
-clear
