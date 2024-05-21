@@ -2,7 +2,7 @@
 # ##################################################################################################
 # MIT License
 #
-# Copyright (c) 2023 DanOrta
+# Copyright (c) 2024 DanOrta
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -42,25 +42,39 @@ AVAILABLE_HASHES="md5sum\nsha1sum\nsha224sum\nsha256sum\nsha384sum\nsha512sum"
 
 if command -v dmenu >/dev/null 2>&1;then
 	HASH=$(echo -e "${AVAILABLE_HASHES}" | dmenu -b)
-	uplo=$(echo -e "lowercase\nUPPERCASE" | dmenu -b)
-	if [ "$uplo" = "UPPERCASE" ]; then
+	CASE=$(echo -e "lowercase\nUPPERCASE" | dmenu -b)
+	if [ "${CASE}" = "UPPERCASE" ]; then
 		# Be careful here: we only look for files with an extension and no dots in its name.
 		# If your file doesn't match the pattern, feel free to adapt it.
-        for i in *.*
-			do
-				EXT=$(echo -e $i | tail -c 4 | cut -d "." -f2)
-				SHA=$($HASH -b "${i}" | cut -d " " -f1)
-				NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:lower:] [:upper:])
-				mv "${i}" $NEWNAME -vn
-		done
+       if [ "${1}" = "" ];then
+            for i in *.*
+	    		do
+		    		EXT=$(echo -e $i | tail -c 4 | cut -d "." -f2)
+			    	SHA=$($HASH -b "${i}" | cut -d " " -f1)
+				    NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+    				mv "${i}" $NEWNAME -vn
+	            done
+        else
+            EXT=$(echo -e $1 | tail -c 4 | cut -d "." -f2)
+            SHA=$($HASH -b "${1}" | cut -d " " -f1)
+            NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+            mv -vn "${1}" $NEWNAME
+        fi
 	else
-        for i in *.*
-			do
-				EXT=$(echo -e $i | tail -c 4 | cut -d "." -f2)
-				SHA=$($HASH -b "${i}" | cut -d " " -f1)
-				NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:upper:] [:lower:])
-				mv "${i}" $NEWNAME -vn
-		done
+        if [ "${1}" = "" ];then
+            for i in *.*
+			    do
+				    EXT=$(echo -e $i | tail -c 4 | cut -d "." -f2)
+    				SHA=$($HASH -b "${i}" | cut -d " " -f1)
+	    			NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:upper:] [:lower:])
+		    		mv "${i}" $NEWNAME -vn
+		        done
+        else
+            EXT=$(echo -e $1 | tail -c 4 | cut -d "." -f2)
+            SHA=$($HASH -b "${1}" | cut -d " " -f1)
+            NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:upper:] [:lower:])
+            mv -vn "${1}" $NEWNAME
+        fi
 	fi
 else
 	echo -e "${RED}dmenu is not installed!${RESET}"
