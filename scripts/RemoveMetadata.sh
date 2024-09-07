@@ -2,7 +2,7 @@
 # ##################################################################################################
 # MIT License
 #
-# Copyright (c) 2023 DanOrta
+# Copyright (c) 2024 DanOrta
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # ##################################################################################################
-# File UpdatePackages.sh
-# Description: A simple file to update software packages in a Debian based distro.
+# File: RemoveMetada.sh
+# Description: Using the tool 'exiftool', this script will allow you to remove the metadata from
+# images within a folder (not recursive).
 # ##################################################################################################
-userName=$(whoami)
-APT_STATUS=$(whereis apt)
-# COLORS
+# Definition of color:
 RESET='\033[00m'
 RED='\033[01;31m'
 GREEN='\033[01;32m'
-if [ "$APT_STATUS" == "apt:" ];then
-    echo -e $RED"You are not using a debian based distro!"$RESET
+STATUS=0
+# First, we need to check if exiftool is installed!
+if command -v exiftool >/dev/null 2>&1;then
+    # We start the loop in here
+    for i in *.*
+        do
+            echo -e "${GREEN}Processing file: ${i}${RESET}"
+            exiftool -all= -overwrite_original -P "${i}"
+            echo
+        done
+    echo -en "${RESET}"
 else
-    if [ $userName = "root" ];then
-		# We don't verify echo for errors, since is very unlikely that something bad happens with
-		# it. If you want an additional check, replace the semi-color for '&&'.
-		((echo -e $GREEN"Updating packages lists..."$RESET; apt-get update) && \
-		(echo -e $GREEN"\nUpgrading packages..."$RESET; apt-get full-upgrade --fix-missing -y) && \
-		(echo -e $GREEN"\nUpgrading distro..."$RESET; apt dist-upgrade -y) && \
-		(echo -e $GREEN"\nRemoving unnecessary packages..."$RESET; apt autoremove -y)) || \
-		echo -e $RED"Something went wrong!"$RESET
-    else
-		echo -n -e $RED"You are not root! Please use sudo to run this script!!\a"$RESET
-	fi
+    echo -e "${RED}Exiftool is not installed! Script cannot be executed.\n${RESET}Go to: https://exiftool.org to install it."
 fi
-
