@@ -37,7 +37,7 @@ if command -v exiftool >/dev/null 2>&1;then
     for i in *.*
         do
             echo -e "${GREEN}Processing file: ${i}${RESET}"
-            exiftool -all= -overwrite_original -P $i
+            exiftool -all= -overwrite_original -P "${i}"
             echo
         done
     echo -en "${RESET}"
