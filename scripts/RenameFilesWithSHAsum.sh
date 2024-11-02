@@ -33,68 +33,101 @@
 # SHA512
 # * Use these hashes with precaution, since they aren't secure and are known to have collisions.
 # ##################################################################################################
-# We need to check if "dmenu" is installed
-# Colors:
 RESET='\033[00m'
 RED='\033[01;31m'
-# Available hashes:
-AVAILABLE_HASHES="md5sum\nsha1sum\nsha224sum\nsha256sum\nsha384sum\nsha512sum"
+GREEN='\033[01;32m'
+CYAN='\033[01;36m'
 
-if command -v dmenu >/dev/null 2>&1;then
-	HASH=$(echo -e "${AVAILABLE_HASHES}" | dmenu -b)
-	CASE=$(echo -e "lowercase\nUPPERCASE" | dmenu -b)
-	if [ "${CASE}" = "UPPERCASE" ]; then
-		# Be careful here: we only look for files with an extension and no dots in its name.
-		# If your file doesn't match the pattern, feel free to adapt it.
-       if [ "${1}" = "" ];then
-            for i in *.*
-	    		do
-		    		EXT=$(echo -e $i | tail -c 4 | cut -d "." -f2)
-			    	SHA=$($HASH -b "${i}" | cut -d " " -f1)
-				    NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:lower:] [:upper:])
-    				mv "${i}" $NEWNAME -vn
-	            done
-        else
-            EXT=$(echo -e $1 | tail -c 4 | cut -d "." -f2)
-            SHA=$($HASH -b "${1}" | cut -d " " -f1)
-            NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:lower:] [:upper:])
-            mv -vn "${1}" $NEWNAME
-        fi
-	else
-        if [ "${1}" = "" ];then
-            for i in *.*
-			    do
-				    EXT=$(echo -e $i | tail -c 4 | cut -d "." -f2)
-    				SHA=$($HASH -b "${i}" | cut -d " " -f1)
-	    			NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:upper:] [:lower:])
-		    		mv "${i}" $NEWNAME -vn
-		        done
-        else
-            EXT=$(echo -e $1 | tail -c 4 | cut -d "." -f2)
-            SHA=$($HASH -b "${1}" | cut -d " " -f1)
-            NEWNAME=$(echo -e "${SHA}.${EXT}" | tr [:upper:] [:lower:])
-            mv -vn "${1}" $NEWNAME
-        fi
-	fi
-else
-	echo -e "${RED}dmenu is not installed!${RESET}"
-fi
+# TODO: Implement the script to accept several files as input
+INPUT=$1
+
+InvalidOption() {
+    echo -e "${RED}Invalid option! Try again.${RESET}"
+}
+
+RenameFileName() {
+    SelectCase
+    CASE=${?}
+
+    for i in *.*
+        do
+            EXT=$(echo -n ${i} | tail -c 4 | cut -d "." -f2)
+            SHA=$(${1} -b "${i}" | cut -d " " -f1)
+
+            if [ "${CASE}" = 1 ];then
+                NEWNAME=$(echo -n "${SHA}.${EXT}" | tr [:upper:] [:lower:])
+            else
+                NEWNAME=$(echo -n "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+            fi
+
+            echo -en "${CYAN}"
+            mv -vn "${i}" ${NEWNAME}
+            echo -en "${RESET}"
+        done
+}
+
+SelectCase() {
+    echo -e "${GREEN}\nSelect if you want to rename your file(s) with uppercase or lowercase:${RESET}"
+
+    select CASE in lowercase UPPERCASE
+
+    do
+        case $CASE in
+            "lowercase")
+                return 1;;
+            "UPPERCASE")
+                return 2;;
+            *)
+                InvalidOption;;
+        esac
+    done
+}
+
+# ##################################################################################################
+echo -e "${GREEN}Select the hash:${RESET}"
+
+select OPT in MD5 SHA1 SHA224 SHA256 SHA384 SHA512
+
+do
+    case $OPT in
+        "MD5")
+            RenameFileName md5sum
+            break;;
+        "SHA1")
+            RenameFileName shasum
+            break;;
+        "SHA224")
+            RenameFileName sha224sum
+            break;;
+        "SHA256")
+            RenameFileName sha256sum
+            break;;
+        "SHA384")
+            RenameFileName sha384sum
+            break;;
+        "SHA512")
+            RenameFileName sha512sum
+            break;;
+        *)
+            InvalidOption;;
+    esac
+done
 
 # ##################################################################################################
 # Alternative Options:
 #
 # Generate a report of all the files that were renamed!
 # for i in *.*
-# 	do
-# 		EXT=$(echo -e $i | cut -d "." -f2)
-# 		SHA=$($HASH -b "$i" | cut -d " " -f1)
-# 		NEWNAME=$(echo -e "$SHA.$EXT" | tr [:lower:] [:upper:])
-# 		mv "$i" $NEWNAME -vn >> REPORT.LOG
+#   do
+#       EXT=$(echo -e ${i} | cut -d "." -f2)
+#       SHA=$(${1} -b "${i}" | cut -d " " -f1)
+#       NEWNAME=$(echo "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+#       mv "${i}" ${NEWNAME} -vn >> REPORT.LOG
 # done
 #
 # Generate a CSV file with the sha-sum of all the files
 # for i in *.*
-# 	do
-# 		SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}"
-# 		echo -e "$SHA"
+#   do
+#       SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}"
+#       echo -e "${SHA}"
 # done > sha256sum_ouput.csv
