@@ -35,34 +35,39 @@
 # ##################################################################################################
 RESET='\033[00m'
 RED='\033[01;31m'
+GREEN='\033[01;32m'
+CYAN='\033[01;36m'
+
+# TODO: Implement the script to accept several files as input
 INPUT=$1
-HASH=md5sum
 
 InvalidOption() {
-    echo -e "Invalid Option! Try again."
+    echo -e "${RED}Invalid option! Try again.${RESET}"
 }
 
 RenameFileName() {
     SelectCase
-    CASE=$?
+    CASE=${?}
 
     for i in *.*
         do
-            EXT=$(echo ${i} | tail -c 4 | cut -d "." -f2)
-            SHA=$($HASH -b "${i}" | cut -d " " -f1)
+            EXT=$(echo -n ${i} | tail -c 4 | cut -d "." -f2)
+            SHA=$(${1} -b "${i}" | cut -d " " -f1)
 
-            if [ "$CASE" = 1 ];then
-                NEWNAME=$(echo "${SHA}.${EXT}" | tr [:upper:] [:lower:])
+            if [ "${CASE}" = 1 ];then
+                NEWNAME=$(echo -n "${SHA}.${EXT}" | tr [:upper:] [:lower:])
             else
-                NEWNAME=$(echo "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+                NEWNAME=$(echo -n "${SHA}.${EXT}" | tr [:lower:] [:upper:])
             fi
 
+            echo -en "${CYAN}"
             mv -vn "${i}" ${NEWNAME}
+            echo -en "${RESET}"
         done
 }
 
 SelectCase() {
-    echo -e "\nSelect if you want to rename your file(s) with uppercase or lowercase:"
+    echo -e "${GREEN}\nSelect if you want to rename your file(s) with uppercase or lowercase:${RESET}"
 
     select CASE in lowercase UPPERCASE
 
@@ -78,35 +83,30 @@ SelectCase() {
     done
 }
 
-echo "Select the hash:"
+# ##################################################################################################
+echo -e "${GREEN}Select the hash:${RESET}"
 
 select OPT in MD5 SHA1 SHA224 SHA256 SHA384 SHA512
 
 do
     case $OPT in
         "MD5")
-            HASH=md5sum
-            RenameFileName $OPT
+            RenameFileName md5sum
             break;;
         "SHA1")
-            HASH=shasum
-            RenameFileName $OPT
+            RenameFileName shasum
             break;;
         "SHA224")
-            HASH=sha224sum
-            RenameFileName $OPT
+            RenameFileName sha224sum
             break;;
         "SHA256")
-            HASH=sha256sum
-            RenameFileName $OPT
+            RenameFileName sha256sum
             break;;
         "SHA384")
-            HASH=sha384sum
-            RenameFileName $OPT
+            RenameFileName sha384sum
             break;;
         "SHA512")
-            HASH=sha512sum
-            RenameFileName $OPT
+            RenameFileName sha512sum
             break;;
         *)
             InvalidOption;;
@@ -118,16 +118,16 @@ done
 #
 # Generate a report of all the files that were renamed!
 # for i in *.*
-#      do
-#              EXT=$(echo -e $i | cut -d "." -f2)
-#              SHA=$($HASH -b "$i" | cut -d " " -f1)
-#              NEWNAME=$(echo -e "$SHA.$EXT" | tr [:lower:] [:upper:])
-#              mv "$i" $NEWNAME -vn >> REPORT.LOG
+#   do
+#       EXT=$(echo -e ${i} | cut -d "." -f2)
+#       SHA=$(${1} -b "${i}" | cut -d " " -f1)
+#       NEWNAME=$(echo "${SHA}.${EXT}" | tr [:lower:] [:upper:])
+#       mv "${i}" ${NEWNAME} -vn >> REPORT.LOG
 # done
 #
 # Generate a CSV file with the sha-sum of all the files
 # for i in *.*
-#      do
-#              SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}"
-#              echo -e "$SHA"
+#   do
+#       SHA="$(sha1sum -b ${i} | cut -d " " -f1), ${i}"
+#       echo -e "${SHA}"
 # done > sha256sum_ouput.csv
