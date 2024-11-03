@@ -23,22 +23,20 @@
 # SOFTWARE.
 # ##################################################################################################
 # File: RenameFilesWithSHAsum.sh
-# Description: With this script in conjuction with the "dmenu" tool, you can select a specifi hash
-# and change the file name with it. Available hashes:
+# Description: A small script to rename files with its HASH value. Available hashes:
 # MD5*
 # SHA1*
 # SHA224
 # SHA256
 # SHA384
 # SHA512
-# * Use these hashes with precaution, since they aren't secure and are known to have collisions.
+# * Use these hashes with precaution, since they known to have collisions.
 # ##################################################################################################
 RESET='\033[00m'
 RED='\033[01;31m'
 GREEN='\033[01;32m'
 CYAN='\033[01;36m'
 
-# TODO: Implement the script to accept several files as input
 INPUT=$1
 
 InvalidOption() {
@@ -46,10 +44,19 @@ InvalidOption() {
 }
 
 RenameFileName() {
+# Note to the user: renaming from uppercase to lowercase (or vice versa) is not possible on Windows
     SelectCase
     CASE=${?}
 
-    for i in *.*
+    # If no files are given to the script, select *.*
+    if [ "${INPUT}" = "" ];then
+        FILES="*.*"
+    else
+    # Rename the given files. TODO: We do not verify if the files exists!
+        FILES="${INPUT}"
+    fi
+
+    for i in ${FILES}
         do
             EXT=$(echo -n ${i} | tail -c 4 | cut -d "." -f2)
             SHA=$(${1} -b "${i}" | cut -d " " -f1)
@@ -61,7 +68,7 @@ RenameFileName() {
             fi
 
             echo -en "${CYAN}"
-            mv -vn "${i}" ${NEWNAME}
+            mv -vn --no-copy "${i}" ${NEWNAME}
             echo -en "${RESET}"
         done
 }
