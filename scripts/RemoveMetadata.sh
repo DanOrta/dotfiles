@@ -30,11 +30,17 @@
 RESET='\033[00m'
 RED='\033[01;31m'
 GREEN='\033[01;32m'
-STATUS=0
+
 # First, we need to check if exiftool is installed!
 if command -v exiftool >/dev/null 2>&1;then
     # We start the loop in here
-    for i in *.*
+    if [ "${1}" = "" ];then
+        FILES="*.*"
+    else
+        FILES="${1}"
+    fi
+
+    for i in ${FILES}
         do
             echo -e "${GREEN}Processing file: ${i}${RESET}"
             exiftool -all= -overwrite_original -P "${i}"
