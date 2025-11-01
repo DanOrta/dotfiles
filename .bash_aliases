@@ -25,3 +25,4 @@
 # Description: A future collection of aliases
 # ##################################################################################################
 alias ll="ls -lashA"
+alias vi="vim"

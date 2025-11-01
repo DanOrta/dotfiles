@@ -7,6 +7,7 @@ alias ll='ls -laAsh --color=auto'
 alias grep='grep --color=auto'
 alias ec="$EDITOR $HOME/.zshrc" # edit .zshrc
 alias sc="source $HOME/.zshrc"  # reload zsh configuration
+alias vi="vim"
 
 setopt autocd              # change directory just by typing its name
 setopt correct             # auto correct mistakes
