@@ -1,7 +1,7 @@
 " ##################################################################################################
 " MIT License
 "
-" Copyright (c) 2023 DanOrta
+" Copyright (c) 2026 DanOrta
 "
 " Permission is hereby granted, free of charge, to any person obtaining a copy
 " of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,7 @@ inoremap <c-s> <Esc>:w<CR>
 " Map Ctrl+Z 
 map <c-z> u
 " Map Ctrl+Z in insert mode
-inoremap <c-z> <Esc>ui<Right>
+inoremap <c-z> <Esc>ul
 " Close without saving
 map <Esc><Esc> :qa!<CR>
 " Add a new line at the end of the file
@@ -114,12 +114,14 @@ autocmd FileType c map <F7> :!make<space>rebuild<CR>
 autocmd FileType cpp map <F7> :!make<space>rebuild<CR>
 
 " ===== LaTeX ===== "
+" Limit the number of characters to 100 per line
+autocmd FileType tex setlocal textwidth=100
 " Normal build
 autocmd FileType tex map <F5> :!make<CR>
-" Rebuild
-autocmd FileType tex map <F7> :!make<space>rebuild<enter>
 " Clean
 autocmd FileType tex map <F6> :!make<space>clean<CR>
+" Rebuild
+autocmd FileType tex map <F7> :!make<space>rebuild<enter>
 " Auto-complete 'begin'
 autocmd FileType tex inoremap \be \begin{}<CR>\end{}<home><CR><Up><Tab>
 " Auto-complete bold text
@@ -130,4 +132,11 @@ autocmd FileType tex inoremap \ti \textit{}<left>
 autocmd FileType tex inoremap \tt \texttt{}<left>
 " Hline (for tables)
 autocmd FileType tex inoremap \hl \hline
+" Open and close double quotes
+autocmd FileType tex inoremap ` ``"<Left>
+
+" ===== .md ===== "
+autocmd FileType markdown inoremap ` ``<Left>
+autocmd FileType markdown inoremap `` ````````<esc>3hi
+
 " ========== File Type specific ========== "

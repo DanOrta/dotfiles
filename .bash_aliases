@@ -1,7 +1,7 @@
 # ##################################################################################################
 # MIT License
 #
-# Copyright (c) 2023 DanOrta
+# Copyright (c) 2026 DanOrta
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,4 +25,5 @@
 # Description: A future collection of aliases
 # ##################################################################################################
 alias ll="ls -lashA"
-alias vi="vim"
+alias server="ssh server@server.local"
+alias update-repo='git fetch --all -p;git fetch origin && git pull -p'
